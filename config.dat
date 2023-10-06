@@ -1,0 +1,31 @@
+{
+	"Domains": [
+		{
+			"APIKey": "YOUR_CLOUDFLARE_API_KEY",
+			"Email": "YOUR_CLOIDFLARE_EMAIL_ADDRESS",
+			"Domain_Name": "YOUR_MAIL_SERVER_DOMAIN.COM",
+			"DNS_Record": "_acme-challenge.mail",
+			"Type": "TXT",
+			"TTL": "120",
+			"DBType": "mssql",
+			"DBIpAddress": "127.0.0.1",
+			"DBPort": "1433",
+			"DBName": "YOUR_HMAIL_DATABASE_NAME",
+			"DBUser": "YOUR_HMAIL_DATABASE_USER",
+			"DBPassword": "YOUR_HMAIL_DATABASE_PASSWORD",
+			"SkipPorts": "9025;9026;9027",
+			"SSLPath": "C:\\MailKeys\\ssl\\",
+			"CountryName": "SSL_COUNTRY_TWO_LETTER_PREFIX",
+			"State": "SSL_STATE_NAME",
+			"Locality": "SSL_CITY_NAME",
+			"Organization": "SSL_ORGANIZATION_NAME",
+			"OU": "SSL_ORGANIZATION_UNIT_NAME",
+			"CommonName": "YOUR_HMAIL_FULL_DOMAIN",
+			"SMTPServer": "IP_OR_DNS_OF_YOUR_SMTP_SERVER",
+			"SMTPPort": "465",
+			"SMTPUser": "SMTP_SERVER_USER",
+			"SMTPPassword": "SMTP_PASSWORD",
+			"SMTPTo": "EMAIL_ADDRESS_TO_RECEIVE_NOIFICATIONS"
+		}
+	]
+}
