@@ -2,6 +2,10 @@
 
 Automate the renewal of SSL certificates for your HMailServer with Let's Encrypt and CloudFlare. This tool is designed to effortlessly monitor SSL certificate expiration and, if necessary, request, install, and apply new SSL certificates to your HMailServer instances.
 
+
+**!!! Important consideration: Please note that this tool only renews a single SSL certificate and applies it to all SSL-enabled ports. It does not support multiple certificates !!!**
+
+
 **Key Features:**
 * Easily configure multiple HMailServers on the same network with distinct domain names and settings.
 * Currently supports **MSSQL** and **MySQL** servers only.
