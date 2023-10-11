@@ -22,7 +22,6 @@ This tool was developed and tested with the following components:
 **NuGet packages:**
 * Certes (Version 3.0.4)
 * Newtonsoft.Json (Version 13.0.3)
-* System.Data.SqlClient (Version 4.8.5)
 * System.ServiceProcess.ServiceController (Version 7.0.1)
 * MailKit (Version 4.2.0)
 
