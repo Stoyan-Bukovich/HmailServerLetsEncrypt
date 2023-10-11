@@ -1,0 +1,85 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Adriana\\Downloads\\HmailServerSSL\\HmailServerLetsEncrypt\\HmailServerLetsEncrypt.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Adriana\\Downloads\\HmailServerSSL\\HmailServerLetsEncrypt\\HmailServerLetsEncrypt.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Adriana\\Downloads\\HmailServerSSL\\HmailServerLetsEncrypt\\HmailServerLetsEncrypt.csproj",
+        "projectName": "HmailServerLetsEncrypt",
+        "projectPath": "C:\\Users\\Adriana\\Downloads\\HmailServerSSL\\HmailServerLetsEncrypt\\HmailServerLetsEncrypt.csproj",
+        "packagesPath": "C:\\Users\\Adriana\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Adriana\\Downloads\\HmailServerSSL\\HmailServerLetsEncrypt\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Adriana\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Certes": {
+              "target": "Package",
+              "version": "[3.0.4, )"
+            },
+            "MailKit": {
+              "target": "Package",
+              "version": "[4.2.0, )"
+            },
+            "MimeKit": {
+              "target": "Package",
+              "version": "[4.2.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
+            "System.ServiceProcess.ServiceController": {
+              "target": "Package",
+              "version": "[7.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
