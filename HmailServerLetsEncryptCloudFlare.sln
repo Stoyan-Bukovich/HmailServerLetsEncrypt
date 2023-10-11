@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34003.232
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configure", "Configure\Configure.csproj", "{C8A43D5B-38FB-42C5-9295-6261855D4B57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HmailServerLetsEncrypt", "HmailServerLetsEncrypt\HmailServerLetsEncrypt.csproj", "{55D831B2-03DC-438C-8283-1F587CF71040}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C8A43D5B-38FB-42C5-9295-6261855D4B57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8A43D5B-38FB-42C5-9295-6261855D4B57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8A43D5B-38FB-42C5-9295-6261855D4B57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8A43D5B-38FB-42C5-9295-6261855D4B57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55D831B2-03DC-438C-8283-1F587CF71040}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55D831B2-03DC-438C-8283-1F587CF71040}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55D831B2-03DC-438C-8283-1F587CF71040}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55D831B2-03DC-438C-8283-1F587CF71040}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {02DB90B2-940E-4B45-A28A-60F5C0D1A425}
+	EndGlobalSection
+EndGlobal
