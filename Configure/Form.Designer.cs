@@ -30,21 +30,26 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Config));
             gbCloudFlare = new GroupBox();
-            btnTestCloudFlate = new Button();
-            chkCloudFlareApi = new CheckBox();
-            cmbCloudFlareTTL = new ComboBox();
+            chkDNSApiSecret = new CheckBox();
+            tbDNSApiSecret = new TextBox();
+            lblDNSApiSecret = new Label();
+            cmbDNSProvider = new ComboBox();
+            lblDNSProvider = new Label();
+            btnTestDNS = new Button();
+            chkDNSApi = new CheckBox();
+            cmbDNSTTL = new ComboBox();
             lblTTLDesc = new Label();
-            lblCloudFlareTTL = new Label();
-            tbCloudFlareRecordType = new TextBox();
-            lblCloudFlareType = new Label();
-            tbCloudFlareDNSRecord = new TextBox();
-            lblCloudFlareDNSRecord = new Label();
-            tbCloudFlareDomain = new TextBox();
-            lblCloudFlareDomain = new Label();
-            tbCloudFlareEmail = new TextBox();
-            lblCloudFlareEmail = new Label();
-            tbCloudFlareApiKey = new TextBox();
-            lblCloudFlareApiKey = new Label();
+            lblDNSTTL = new Label();
+            tbDNSRecordType = new TextBox();
+            lblDNSType = new Label();
+            tbDNSRecord = new TextBox();
+            lblDNSRecord = new Label();
+            tbDNSDomain = new TextBox();
+            lblDNSDomain = new Label();
+            tbDNSEmail = new TextBox();
+            lblDNSEmail = new Label();
+            tbDNSApiKey = new TextBox();
+            lblDNSApiKey = new Label();
             btnSave = new Button();
             gbSSL = new GroupBox();
             lblSSLCountryDesc = new Label();
@@ -97,173 +102,224 @@
             // gbCloudFlare
             // 
             gbCloudFlare.BackColor = SystemColors.Control;
-            gbCloudFlare.Controls.Add(btnTestCloudFlate);
-            gbCloudFlare.Controls.Add(chkCloudFlareApi);
-            gbCloudFlare.Controls.Add(cmbCloudFlareTTL);
+            gbCloudFlare.Controls.Add(chkDNSApiSecret);
+            gbCloudFlare.Controls.Add(tbDNSApiSecret);
+            gbCloudFlare.Controls.Add(lblDNSApiSecret);
+            gbCloudFlare.Controls.Add(cmbDNSProvider);
+            gbCloudFlare.Controls.Add(lblDNSProvider);
+            gbCloudFlare.Controls.Add(btnTestDNS);
+            gbCloudFlare.Controls.Add(chkDNSApi);
+            gbCloudFlare.Controls.Add(cmbDNSTTL);
             gbCloudFlare.Controls.Add(lblTTLDesc);
-            gbCloudFlare.Controls.Add(lblCloudFlareTTL);
-            gbCloudFlare.Controls.Add(tbCloudFlareRecordType);
-            gbCloudFlare.Controls.Add(lblCloudFlareType);
-            gbCloudFlare.Controls.Add(tbCloudFlareDNSRecord);
-            gbCloudFlare.Controls.Add(lblCloudFlareDNSRecord);
-            gbCloudFlare.Controls.Add(tbCloudFlareDomain);
-            gbCloudFlare.Controls.Add(lblCloudFlareDomain);
-            gbCloudFlare.Controls.Add(tbCloudFlareEmail);
-            gbCloudFlare.Controls.Add(lblCloudFlareEmail);
-            gbCloudFlare.Controls.Add(tbCloudFlareApiKey);
-            gbCloudFlare.Controls.Add(lblCloudFlareApiKey);
+            gbCloudFlare.Controls.Add(lblDNSTTL);
+            gbCloudFlare.Controls.Add(tbDNSRecordType);
+            gbCloudFlare.Controls.Add(lblDNSType);
+            gbCloudFlare.Controls.Add(tbDNSRecord);
+            gbCloudFlare.Controls.Add(lblDNSRecord);
+            gbCloudFlare.Controls.Add(tbDNSDomain);
+            gbCloudFlare.Controls.Add(lblDNSDomain);
+            gbCloudFlare.Controls.Add(tbDNSEmail);
+            gbCloudFlare.Controls.Add(lblDNSEmail);
+            gbCloudFlare.Controls.Add(tbDNSApiKey);
+            gbCloudFlare.Controls.Add(lblDNSApiKey);
             gbCloudFlare.Location = new Point(12, 12);
             gbCloudFlare.Name = "gbCloudFlare";
-            gbCloudFlare.Size = new Size(500, 295);
+            gbCloudFlare.Size = new Size(500, 369);
             gbCloudFlare.TabIndex = 0;
             gbCloudFlare.TabStop = false;
-            gbCloudFlare.Text = "CloudFlare API";
+            gbCloudFlare.Text = "DNS API";
             // 
-            // btnTestCloudFlate
+            // chkDNSApiSecret
             // 
-            btnTestCloudFlate.BackColor = SystemColors.Control;
-            btnTestCloudFlate.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            btnTestCloudFlate.ForeColor = Color.Red;
-            btnTestCloudFlate.Location = new Point(205, 253);
-            btnTestCloudFlate.Name = "btnTestCloudFlate";
-            btnTestCloudFlate.Size = new Size(91, 27);
-            btnTestCloudFlate.TabIndex = 8;
-            btnTestCloudFlate.Text = "Test";
-            btnTestCloudFlate.UseVisualStyleBackColor = false;
-            btnTestCloudFlate.Click += btnTestCloudFlate_Click;
+            chkDNSApiSecret.AutoSize = true;
+            chkDNSApiSecret.Location = new Point(475, 106);
+            chkDNSApiSecret.Name = "chkDNSApiSecret";
+            chkDNSApiSecret.Size = new Size(15, 14);
+            chkDNSApiSecret.TabIndex = 21;
+            chkDNSApiSecret.UseVisualStyleBackColor = true;
+            chkDNSApiSecret.CheckedChanged += chkDNSApiSecret_CheckedChanged;
             // 
-            // chkCloudFlareApi
+            // tbDNSApiSecret
             // 
-            chkCloudFlareApi.AutoSize = true;
-            chkCloudFlareApi.Location = new Point(475, 28);
-            chkCloudFlareApi.Name = "chkCloudFlareApi";
-            chkCloudFlareApi.Size = new Size(15, 14);
-            chkCloudFlareApi.TabIndex = 2;
-            chkCloudFlareApi.UseVisualStyleBackColor = true;
-            chkCloudFlareApi.CheckedChanged += chkCloudFlareApi_CheckedChanged;
+            tbDNSApiSecret.Location = new Point(90, 102);
+            tbDNSApiSecret.MaxLength = 1000;
+            tbDNSApiSecret.Name = "tbDNSApiSecret";
+            tbDNSApiSecret.Size = new Size(379, 23);
+            tbDNSApiSecret.TabIndex = 20;
+            tbDNSApiSecret.UseSystemPasswordChar = true;
             // 
-            // cmbCloudFlareTTL
+            // lblDNSApiSecret
             // 
-            cmbCloudFlareTTL.FormattingEnabled = true;
-            cmbCloudFlareTTL.Location = new Point(90, 215);
-            cmbCloudFlareTTL.Name = "cmbCloudFlareTTL";
-            cmbCloudFlareTTL.Size = new Size(121, 23);
-            cmbCloudFlareTTL.TabIndex = 7;
+            lblDNSApiSecret.AutoSize = true;
+            lblDNSApiSecret.Location = new Point(6, 105);
+            lblDNSApiSecret.Name = "lblDNSApiSecret";
+            lblDNSApiSecret.Size = new Size(70, 15);
+            lblDNSApiSecret.TabIndex = 19;
+            lblDNSApiSecret.Text = "API secret: *";
+            // 
+            // cmbDNSProvider
+            // 
+            cmbDNSProvider.FormattingEnabled = true;
+            cmbDNSProvider.Location = new Point(90, 26);
+            cmbDNSProvider.Name = "cmbDNSProvider";
+            cmbDNSProvider.Size = new Size(206, 23);
+            cmbDNSProvider.TabIndex = 1;
+            cmbDNSProvider.SelectedIndexChanged += cmbDNSProvider_SelectedIndexChanged;
+            // 
+            // lblDNSProvider
+            // 
+            lblDNSProvider.AutoSize = true;
+            lblDNSProvider.Location = new Point(6, 29);
+            lblDNSProvider.Name = "lblDNSProvider";
+            lblDNSProvider.Size = new Size(62, 15);
+            lblDNSProvider.TabIndex = 18;
+            lblDNSProvider.Text = "Provider: *";
+            // 
+            // btnTestDNS
+            // 
+            btnTestDNS.BackColor = SystemColors.Control;
+            btnTestDNS.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            btnTestDNS.ForeColor = Color.Red;
+            btnTestDNS.Location = new Point(205, 330);
+            btnTestDNS.Name = "btnTestDNS";
+            btnTestDNS.Size = new Size(91, 27);
+            btnTestDNS.TabIndex = 8;
+            btnTestDNS.Text = "Test";
+            btnTestDNS.UseVisualStyleBackColor = false;
+            btnTestDNS.Click += btnTestDNS_Click;
+            // 
+            // chkDNSApi
+            // 
+            chkDNSApi.AutoSize = true;
+            chkDNSApi.Location = new Point(475, 67);
+            chkDNSApi.Name = "chkDNSApi";
+            chkDNSApi.Size = new Size(15, 14);
+            chkDNSApi.TabIndex = 2;
+            chkDNSApi.UseVisualStyleBackColor = true;
+            chkDNSApi.CheckedChanged += chkCloudFlareApi_CheckedChanged;
+            // 
+            // cmbDNSTTL
+            // 
+            cmbDNSTTL.FormattingEnabled = true;
+            cmbDNSTTL.Location = new Point(90, 292);
+            cmbDNSTTL.Name = "cmbDNSTTL";
+            cmbDNSTTL.Size = new Size(121, 23);
+            cmbDNSTTL.TabIndex = 7;
             // 
             // lblTTLDesc
             // 
             lblTTLDesc.AutoSize = true;
-            lblTTLDesc.Location = new Point(225, 218);
+            lblTTLDesc.Location = new Point(225, 295);
             lblTTLDesc.Name = "lblTTLDesc";
             lblTTLDesc.Size = new Size(71, 15);
             lblTTLDesc.TabIndex = 16;
             lblTTLDesc.Text = "(in seconds)";
             // 
-            // lblCloudFlareTTL
+            // lblDNSTTL
             // 
-            lblCloudFlareTTL.AutoSize = true;
-            lblCloudFlareTTL.Location = new Point(6, 218);
-            lblCloudFlareTTL.Name = "lblCloudFlareTTL";
-            lblCloudFlareTTL.Size = new Size(36, 15);
-            lblCloudFlareTTL.TabIndex = 10;
-            lblCloudFlareTTL.Text = "TTL: *";
+            lblDNSTTL.AutoSize = true;
+            lblDNSTTL.Location = new Point(6, 295);
+            lblDNSTTL.Name = "lblDNSTTL";
+            lblDNSTTL.Size = new Size(36, 15);
+            lblDNSTTL.TabIndex = 10;
+            lblDNSTTL.Text = "TTL: *";
             // 
-            // tbCloudFlareRecordType
+            // tbDNSRecordType
             // 
-            tbCloudFlareRecordType.Location = new Point(90, 177);
-            tbCloudFlareRecordType.MaxLength = 4;
-            tbCloudFlareRecordType.Name = "tbCloudFlareRecordType";
-            tbCloudFlareRecordType.ReadOnly = true;
-            tbCloudFlareRecordType.Size = new Size(121, 23);
-            tbCloudFlareRecordType.TabIndex = 6;
-            tbCloudFlareRecordType.Text = "TXT";
+            tbDNSRecordType.Location = new Point(90, 254);
+            tbDNSRecordType.MaxLength = 4;
+            tbDNSRecordType.Name = "tbDNSRecordType";
+            tbDNSRecordType.ReadOnly = true;
+            tbDNSRecordType.Size = new Size(121, 23);
+            tbDNSRecordType.TabIndex = 6;
+            tbDNSRecordType.Text = "TXT";
             // 
-            // lblCloudFlareType
+            // lblDNSType
             // 
-            lblCloudFlareType.AutoSize = true;
-            lblCloudFlareType.Location = new Point(6, 180);
-            lblCloudFlareType.Name = "lblCloudFlareType";
-            lblCloudFlareType.Size = new Size(81, 15);
-            lblCloudFlareType.TabIndex = 8;
-            lblCloudFlareType.Text = "Record type: *";
+            lblDNSType.AutoSize = true;
+            lblDNSType.Location = new Point(6, 257);
+            lblDNSType.Name = "lblDNSType";
+            lblDNSType.Size = new Size(81, 15);
+            lblDNSType.TabIndex = 8;
+            lblDNSType.Text = "Record type: *";
             // 
-            // tbCloudFlareDNSRecord
+            // tbDNSRecord
             // 
-            tbCloudFlareDNSRecord.CharacterCasing = CharacterCasing.Lower;
-            tbCloudFlareDNSRecord.Location = new Point(90, 138);
-            tbCloudFlareDNSRecord.MaxLength = 1000;
-            tbCloudFlareDNSRecord.Name = "tbCloudFlareDNSRecord";
-            tbCloudFlareDNSRecord.Size = new Size(209, 23);
-            tbCloudFlareDNSRecord.TabIndex = 5;
-            tbCloudFlareDNSRecord.Text = "_acme-challenge.mail";
+            tbDNSRecord.CharacterCasing = CharacterCasing.Lower;
+            tbDNSRecord.Location = new Point(90, 215);
+            tbDNSRecord.MaxLength = 1000;
+            tbDNSRecord.Name = "tbDNSRecord";
+            tbDNSRecord.Size = new Size(209, 23);
+            tbDNSRecord.TabIndex = 5;
+            tbDNSRecord.Text = "_acme-challenge.mail";
             // 
-            // lblCloudFlareDNSRecord
+            // lblDNSRecord
             // 
-            lblCloudFlareDNSRecord.AutoSize = true;
-            lblCloudFlareDNSRecord.Location = new Point(6, 141);
-            lblCloudFlareDNSRecord.Name = "lblCloudFlareDNSRecord";
-            lblCloudFlareDNSRecord.Size = new Size(78, 15);
-            lblCloudFlareDNSRecord.TabIndex = 6;
-            lblCloudFlareDNSRecord.Text = "DNS record: *";
+            lblDNSRecord.AutoSize = true;
+            lblDNSRecord.Location = new Point(6, 218);
+            lblDNSRecord.Name = "lblDNSRecord";
+            lblDNSRecord.Size = new Size(78, 15);
+            lblDNSRecord.TabIndex = 6;
+            lblDNSRecord.Text = "DNS record: *";
             // 
-            // tbCloudFlareDomain
+            // tbDNSDomain
             // 
-            tbCloudFlareDomain.CharacterCasing = CharacterCasing.Lower;
-            tbCloudFlareDomain.Location = new Point(90, 100);
-            tbCloudFlareDomain.MaxLength = 1000;
-            tbCloudFlareDomain.Name = "tbCloudFlareDomain";
-            tbCloudFlareDomain.Size = new Size(400, 23);
-            tbCloudFlareDomain.TabIndex = 4;
+            tbDNSDomain.CharacterCasing = CharacterCasing.Lower;
+            tbDNSDomain.Location = new Point(90, 177);
+            tbDNSDomain.MaxLength = 1000;
+            tbDNSDomain.Name = "tbDNSDomain";
+            tbDNSDomain.Size = new Size(400, 23);
+            tbDNSDomain.TabIndex = 4;
             // 
-            // lblCloudFlareDomain
+            // lblDNSDomain
             // 
-            lblCloudFlareDomain.AutoSize = true;
-            lblCloudFlareDomain.Location = new Point(6, 103);
-            lblCloudFlareDomain.Name = "lblCloudFlareDomain";
-            lblCloudFlareDomain.Size = new Size(60, 15);
-            lblCloudFlareDomain.TabIndex = 4;
-            lblCloudFlareDomain.Text = "Domain: *";
+            lblDNSDomain.AutoSize = true;
+            lblDNSDomain.Location = new Point(6, 180);
+            lblDNSDomain.Name = "lblDNSDomain";
+            lblDNSDomain.Size = new Size(60, 15);
+            lblDNSDomain.TabIndex = 4;
+            lblDNSDomain.Text = "Domain: *";
             // 
-            // tbCloudFlareEmail
+            // tbDNSEmail
             // 
-            tbCloudFlareEmail.CharacterCasing = CharacterCasing.Lower;
-            tbCloudFlareEmail.Location = new Point(90, 62);
-            tbCloudFlareEmail.MaxLength = 1000;
-            tbCloudFlareEmail.Name = "tbCloudFlareEmail";
-            tbCloudFlareEmail.Size = new Size(400, 23);
-            tbCloudFlareEmail.TabIndex = 3;
+            tbDNSEmail.CharacterCasing = CharacterCasing.Lower;
+            tbDNSEmail.Location = new Point(90, 139);
+            tbDNSEmail.MaxLength = 1000;
+            tbDNSEmail.Name = "tbDNSEmail";
+            tbDNSEmail.Size = new Size(400, 23);
+            tbDNSEmail.TabIndex = 3;
             // 
-            // lblCloudFlareEmail
+            // lblDNSEmail
             // 
-            lblCloudFlareEmail.AutoSize = true;
-            lblCloudFlareEmail.Location = new Point(6, 65);
-            lblCloudFlareEmail.Name = "lblCloudFlareEmail";
-            lblCloudFlareEmail.Size = new Size(47, 15);
-            lblCloudFlareEmail.TabIndex = 2;
-            lblCloudFlareEmail.Text = "Email: *";
+            lblDNSEmail.AutoSize = true;
+            lblDNSEmail.Location = new Point(6, 142);
+            lblDNSEmail.Name = "lblDNSEmail";
+            lblDNSEmail.Size = new Size(47, 15);
+            lblDNSEmail.TabIndex = 2;
+            lblDNSEmail.Text = "Email: *";
             // 
-            // tbCloudFlareApiKey
+            // tbDNSApiKey
             // 
-            tbCloudFlareApiKey.Location = new Point(90, 24);
-            tbCloudFlareApiKey.MaxLength = 1000;
-            tbCloudFlareApiKey.Name = "tbCloudFlareApiKey";
-            tbCloudFlareApiKey.Size = new Size(379, 23);
-            tbCloudFlareApiKey.TabIndex = 1;
-            tbCloudFlareApiKey.UseSystemPasswordChar = true;
+            tbDNSApiKey.Location = new Point(90, 63);
+            tbDNSApiKey.MaxLength = 1000;
+            tbDNSApiKey.Name = "tbDNSApiKey";
+            tbDNSApiKey.Size = new Size(379, 23);
+            tbDNSApiKey.TabIndex = 1;
+            tbDNSApiKey.UseSystemPasswordChar = true;
             // 
-            // lblCloudFlareApiKey
+            // lblDNSApiKey
             // 
-            lblCloudFlareApiKey.AutoSize = true;
-            lblCloudFlareApiKey.Location = new Point(6, 27);
-            lblCloudFlareApiKey.Name = "lblCloudFlareApiKey";
-            lblCloudFlareApiKey.Size = new Size(57, 15);
-            lblCloudFlareApiKey.TabIndex = 0;
-            lblCloudFlareApiKey.Text = "API key: *";
+            lblDNSApiKey.AutoSize = true;
+            lblDNSApiKey.Location = new Point(6, 66);
+            lblDNSApiKey.Name = "lblDNSApiKey";
+            lblDNSApiKey.Size = new Size(57, 15);
+            lblDNSApiKey.TabIndex = 0;
+            lblDNSApiKey.Text = "API key: *";
             // 
             // btnSave
             // 
             btnSave.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            btnSave.Location = new Point(358, 1061);
+            btnSave.Location = new Point(358, 1135);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(154, 40);
             btnSave.TabIndex = 29;
@@ -289,7 +345,7 @@
             gbSSL.Controls.Add(lblDBPort);
             gbSSL.Controls.Add(tbSSLPath);
             gbSSL.Controls.Add(lblSSLPath);
-            gbSSL.Location = new Point(13, 317);
+            gbSSL.Location = new Point(13, 394);
             gbSSL.Name = "gbSSL";
             gbSSL.Size = new Size(499, 287);
             gbSSL.TabIndex = 2;
@@ -443,7 +499,7 @@
             gbNotification.Controls.Add(chkNotify);
             gbNotification.Controls.Add(lblNotify);
             gbNotification.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            gbNotification.Location = new Point(18, 619);
+            gbNotification.Location = new Point(18, 694);
             gbNotification.Name = "gbNotification";
             gbNotification.Size = new Size(494, 281);
             gbNotification.TabIndex = 3;
@@ -600,7 +656,7 @@
             gbHmail.Controls.Add(lblHmailPassword);
             gbHmail.Controls.Add(tbHmailUser);
             gbHmail.Controls.Add(lblHmailUser);
-            gbHmail.Location = new Point(18, 910);
+            gbHmail.Location = new Point(18, 985);
             gbHmail.Name = "gbHmail";
             gbHmail.Size = new Size(494, 133);
             gbHmail.TabIndex = 4;
@@ -669,7 +725,7 @@
             // lblSpacer
             // 
             lblSpacer.AutoSize = true;
-            lblSpacer.Location = new Point(246, 1100);
+            lblSpacer.Location = new Point(246, 1180);
             lblSpacer.Name = "lblSpacer";
             lblSpacer.Size = new Size(0, 15);
             lblSpacer.TabIndex = 27;
@@ -677,7 +733,7 @@
             // lblEncrypt
             // 
             lblEncrypt.AutoSize = true;
-            lblEncrypt.Location = new Point(24, 1075);
+            lblEncrypt.Location = new Point(24, 1149);
             lblEncrypt.Name = "lblEncrypt";
             lblEncrypt.Size = new Size(144, 15);
             lblEncrypt.TabIndex = 27;
@@ -686,7 +742,7 @@
             // chkEncryptConfig
             // 
             chkEncryptConfig.AutoSize = true;
-            chkEncryptConfig.Location = new Point(174, 1076);
+            chkEncryptConfig.Location = new Point(174, 1150);
             chkEncryptConfig.Name = "chkEncryptConfig";
             chkEncryptConfig.Size = new Size(15, 14);
             chkEncryptConfig.TabIndex = 28;
@@ -730,17 +786,17 @@
 
         private GroupBox gbCloudFlare;
         private Button btnSave;
-        private Label lblCloudFlareApiKey;
-        private TextBox tbCloudFlareApiKey;
-        private TextBox tbCloudFlareEmail;
-        private Label lblCloudFlareEmail;
-        private TextBox tbCloudFlareDomain;
-        private Label lblCloudFlareDomain;
-        private TextBox tbCloudFlareDNSRecord;
-        private Label lblCloudFlareDNSRecord;
-        private TextBox tbCloudFlareRecordType;
-        private Label lblCloudFlareType;
-        private Label lblCloudFlareTTL;
+        private Label lblDNSApiKey;
+        private TextBox tbDNSApiKey;
+        private TextBox tbDNSEmail;
+        private Label lblDNSEmail;
+        private TextBox tbDNSDomain;
+        private Label lblDNSDomain;
+        private TextBox tbDNSRecord;
+        private Label lblDNSRecord;
+        private TextBox tbDNSRecordType;
+        private Label lblDNSType;
+        private Label lblDNSTTL;
         private GroupBox gbSSL;
         private TextBox tbSSLPath;
         private Label lblSSLPath;
@@ -775,8 +831,8 @@
         private Label lblHmailUser;
         private Label lblSpacer;
         private Label lblTTLDesc;
-        private ComboBox cmbCloudFlareTTL;
-        private CheckBox chkCloudFlareApi;
+        private ComboBox cmbDNSTTL;
+        private CheckBox chkDNSApi;
         private CheckBox chkNotifyPassword;
         private CheckBox chkHmailPassword;
         private Label lblEncrypt;
@@ -785,7 +841,12 @@
         private Label lblSSLCountryDesc;
         private Button btnTestHmail;
         private Button btnTestEmail;
-        private Button btnTestCloudFlate;
+        private Button btnTestDNS;
         private Label label1;
+        private ComboBox cmbDNSProvider;
+        private Label lblDNSProvider;
+        private CheckBox chkDNSApiSecret;
+        private TextBox tbDNSApiSecret;
+        private Label lblDNSApiSecret;
     }
 }

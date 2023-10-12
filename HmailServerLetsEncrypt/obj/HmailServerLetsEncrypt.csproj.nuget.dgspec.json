@@ -10,11 +10,11 @@
         "projectUniqueName": "C:\\Users\\Adriana\\Downloads\\HmailServerSSL\\HmailServerLetsEncrypt\\HmailServerLetsEncrypt.csproj",
         "projectName": "HmailServerLetsEncrypt",
         "projectPath": "C:\\Users\\Adriana\\Downloads\\HmailServerSSL\\HmailServerLetsEncrypt\\HmailServerLetsEncrypt.csproj",
-        "packagesPath": "C:\\Users\\Adriana\\.nuget\\packages\\",
+        "packagesPath": "C:\\Users\\Usuario\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\Adriana\\Downloads\\HmailServerSSL\\HmailServerLetsEncrypt\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Adriana\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Usuario\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

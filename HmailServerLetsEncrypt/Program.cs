@@ -14,7 +14,7 @@ using System.Security.Cryptography;
 using System.Text;
 #endregion
 
-namespace LetsEncryptWithCloudflare
+namespace LetsEncrypt
 {
     class Program
     {
@@ -60,6 +60,7 @@ namespace LetsEncryptWithCloudflare
                         string OU = domain.OU;
                         string letsEncryptPemAccount = domain.LetsEncryptPemAccount.ToString().Trim();
                         string sslPath = domain.SSLPath;
+                        string dnsProvider = domain.DNSProvider;
 
                         bool isEncryptedConfig = bool.Parse(domain.EncryptConfig.ToString());
 
@@ -117,10 +118,19 @@ namespace LetsEncryptWithCloudflare
                         var dnsChallenge = await authz.Dns();
                         var dnsTxt = acme.AccountKey.DnsTxt(dnsChallenge.Token);
 
-                        // Update Cloud Flare TXT record.
-                        bool cloudFlareStatus = await UpdateCloudFlareAsync(dnsTxt);
+                        // Update DNS TXT record.
+                        bool dnsStatus = false;
 
-                        if(cloudFlareStatus)
+                        if(dnsProvider == "CloudFlare")
+                        {
+                            dnsStatus = await UpdateCloudFlareAsync(dnsTxt);
+                        }
+                        else
+                        {
+                            dnsStatus = await UpdateGoDaddyAsync(dnsTxt);
+                        }
+
+                        if(dnsStatus)
                         {
                             Thread.Sleep(60000); // Wait for 1 min to propagate the DNS record change. Set time as it fits.
                             await dnsChallenge.Validate();
@@ -378,7 +388,104 @@ namespace LetsEncryptWithCloudflare
         }
         #endregion
 
-        #region Methods CloudFlare
+        #region Methods DNS
+        protected static async Task<bool> UpdateGoDaddyAsync(string txtRecord)
+        {
+            bool reply = true;
+            if (File.Exists(configPath))
+            {
+                string configuration = await File.ReadAllTextAsync(configPath);
+
+                dynamic data = JObject.Parse(configuration);
+                dynamic domains = data.Domains;
+
+                foreach (dynamic domain in domains)
+                {
+                    try
+                    {
+                        string apiKey = Convert.ToString(domain.APIKey);
+                        string apiSecret = Convert.ToString(domain.APISecret);
+
+                        string domainName = Convert.ToString(domain.Domain_Name);
+                        string dnsRecord = Convert.ToString(domain.DNS_Record);
+                        string type = Convert.ToString(domain.Type);
+                        string ttl = Convert.ToString(domain.TTL);
+
+                        bool isEncryptedConfig = bool.Parse(domain.EncryptConfig.ToString());
+
+                        if (isEncryptedConfig)
+                        {
+                            apiKey = AesDecrypt(apiKey);
+                            apiSecret = AesDecrypt(apiSecret);
+                            domainName = AesDecrypt(domainName);
+                            dnsRecord = AesDecrypt(dnsRecord);
+                        }
+
+                        Dictionary<string, object> pushRecord = new Dictionary<string, object>()
+                        {
+                            { "data", txtRecord },
+                            { "name", dnsRecord },
+                            { "ttl", int.Parse(ttl) },
+                            { "type", type },
+                            { "port", 1 },
+                            { "priority", 0 },
+                            { "protocol", "string" },
+                            { "service", "string" },
+                            { "weight", 0 },
+                        };
+
+                        string jsonData = JsonConvert.SerializeObject(new object[1] { pushRecord });
+
+                        HttpWebRequest req = (HttpWebRequest)WebRequest.Create("https://api.godaddy.com/v1/domains/" + domainName + "/records/TXT/" + dnsRecord);
+
+                        req.Headers.Add("Authorization", "sso-key " + apiKey + ":" + apiSecret);
+                        req.ContentType = "application/json";
+                        req.Accept = "application/json";
+                        req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
+                        req.Method = "PUT";
+                        req.ContentLength = jsonData.Length;
+
+                        using (var writer = new StreamWriter(req.GetRequestStream()))
+                        {
+                            writer.Write(jsonData);
+                        }
+
+                        Dictionary<string, string> headers = new Dictionary<string, string>();
+
+                        HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+                        Stream strm = resp.GetResponseStream();
+                        StreamReader Reader = new StreamReader(strm, Encoding.Default);
+
+                        string content = Reader.ReadToEnd();
+                        headers.Clear();
+
+                        foreach (string headkey in resp.Headers.AllKeys)
+                        {
+                            headers.Add(headkey, resp.Headers[headkey]);
+                        }
+
+                        resp.Close();
+                        strm.Close();
+
+                        headers.Clear();
+
+                        await LogWriteAsync("Updated TXT record " + dnsRecord + "." + domainName + " to " + txtRecord + " on " + DateTime.Now);
+                    }
+                    catch (Exception ex)
+                    {
+                        await LogWriteAsync("General exception (UpdateGoDaddyAsync): " + ex.Message + " " + DateTime.Now);
+                        reply = false;
+                    }
+                }
+            }
+            else
+            {
+                await LogWriteAsync("Configuration file not found (UpdateGoDaddyAsync): " + configPath + " " + DateTime.Now);
+                reply = false;
+            }
+
+            return reply;
+        }
         protected static async Task<bool> UpdateCloudFlareAsync(string txtRecord)
         {
             bool reply = true;

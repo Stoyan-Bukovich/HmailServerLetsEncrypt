@@ -28,18 +28,19 @@ namespace Configure
 
         private async void Config_Load(object sender, EventArgs e)
         {
-            cmbCloudFlareTTL.Items.Add("60"); // 1 min
-            cmbCloudFlareTTL.Items.Add("120"); // 2 min
-            cmbCloudFlareTTL.Items.Add("300"); // 5 min
-            cmbCloudFlareTTL.Items.Add("600"); // 10 min
-            cmbCloudFlareTTL.Items.Add("900"); // 15 min
-            cmbCloudFlareTTL.Items.Add("1800"); // 1 hour
-            cmbCloudFlareTTL.Items.Add("7200"); // 2 hours
-            cmbCloudFlareTTL.Items.Add("18000"); // 5 hours
-            cmbCloudFlareTTL.Items.Add("43200"); // 12 hours
-            cmbCloudFlareTTL.Items.Add("86400"); // 1 day
+            cmbDNSTTL.Items.Add("60"); // 1 min
+            cmbDNSTTL.Items.Add("120"); // 2 min
+            cmbDNSTTL.Items.Add("300"); // 5 min
+            cmbDNSTTL.Items.Add("600"); // 10 min
+            cmbDNSTTL.Items.Add("900"); // 15 min
+            cmbDNSTTL.Items.Add("1800"); // 30 min
+            cmbDNSTTL.Items.Add("3600"); // 1 hour
+            cmbDNSTTL.Items.Add("7200"); // 2 hours
+            cmbDNSTTL.Items.Add("18000"); // 5 hours
+            cmbDNSTTL.Items.Add("43200"); // 12 hours
+            cmbDNSTTL.Items.Add("86400"); // 1 day
 
-            cmbCloudFlareTTL.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbDNSTTL.DropDownStyle = ComboBoxStyle.DropDownList;
 
             foreach (string country in countriesTwoLetterISO.Split(','))
             {
@@ -47,6 +48,11 @@ namespace Configure
             }
 
             cmbSSLCountry.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            cmbDNSProvider.Items.Add("CloudFlare");
+            cmbDNSProvider.Items.Add("GoDaddy");
+
+            cmbDNSProvider.DropDownStyle = ComboBoxStyle.DropDownList;
 
             if (File.Exists(configPath))
             {
@@ -75,13 +81,15 @@ namespace Configure
 
                         if (encryptConfig)
                         {
-                            // CloudFlare
-                            tbCloudFlareApiKey.Text = AesDecrypt(domain.APIKey.ToString());
-                            tbCloudFlareEmail.Text = AesDecrypt(domain.Email.ToString());
-                            tbCloudFlareDomain.Text = AesDecrypt(domain.Domain_Name.ToString());
-                            tbCloudFlareDNSRecord.Text = AesDecrypt(domain.DNS_Record.ToString());
-                            tbCloudFlareRecordType.Text = domain.Type;
-                            cmbCloudFlareTTL.SelectedItem = domain.TTL.ToString().Trim().ToLower();
+                            // DNS
+                            cmbDNSProvider.SelectedItem = domain.DNSProvider.ToString().Trim();
+                            tbDNSApiSecret.Text = AesDecrypt(domain.APISecret.ToString());
+                            tbDNSApiKey.Text = AesDecrypt(domain.APIKey.ToString());
+                            tbDNSEmail.Text = AesDecrypt(domain.Email.ToString());
+                            tbDNSDomain.Text = AesDecrypt(domain.Domain_Name.ToString());
+                            tbDNSRecord.Text = AesDecrypt(domain.DNS_Record.ToString());
+                            tbDNSRecordType.Text = domain.Type;
+                            cmbDNSTTL.SelectedItem = domain.TTL.ToString().Trim().ToLower();
 
                             // SSL
                             tbSSLPath.Text = AesDecrypt(domain.SSLPath.ToString());
@@ -120,13 +128,15 @@ namespace Configure
                         }
                         else
                         {
-                            // CloudFlare
-                            tbCloudFlareApiKey.Text = domain.APIKey;
-                            tbCloudFlareEmail.Text = domain.Email;
-                            tbCloudFlareDomain.Text = domain.Domain_Name;
-                            tbCloudFlareDNSRecord.Text = domain.DNS_Record;
-                            tbCloudFlareRecordType.Text = domain.Type;
-                            cmbCloudFlareTTL.SelectedItem = domain.TTL.ToString().Trim().ToLower();
+                            // DNS
+                            cmbDNSProvider.SelectedItem = domain.DNSProvider.ToString().Trim();
+                            tbDNSApiSecret.Text = domain.APISecret.ToString();
+                            tbDNSApiKey.Text = domain.APIKey;
+                            tbDNSEmail.Text = domain.Email;
+                            tbDNSDomain.Text = domain.Domain_Name;
+                            tbDNSRecord.Text = domain.DNS_Record;
+                            tbDNSRecordType.Text = domain.Type;
+                            cmbDNSTTL.SelectedItem = domain.TTL.ToString().Trim().ToLower();
 
                             // SSL
                             tbSSLPath.Text = domain.SSLPath;
@@ -269,133 +279,234 @@ namespace Configure
             btnTestHmail.Text = "Test";
             btnTestHmail.Enabled = true;
         }
-        private async void btnTestCloudFlate_Click(object sender, EventArgs e)
+        private async void btnTestDNS_Click(object sender, EventArgs e)
         {
-            btnTestCloudFlate.Text = "Testing...";
-            btnTestCloudFlate.Enabled = false;
-
-            try
+            if (cmbDNSTTL.SelectedItem == null)
             {
-                string apiKey = tbCloudFlareApiKey.Text.Trim();
-                string email = tbCloudFlareEmail.Text.Trim().ToLower();
-
-                string domainName = tbCloudFlareDomain.Text.Trim().ToLower();
-                string dnsRecord = tbCloudFlareDNSRecord.Text.Trim();
-                string type = tbCloudFlareRecordType.Text.Trim();
-                string ttl = cmbCloudFlareTTL.SelectedItem.ToString();
-
-                ServicePointManager.DefaultConnectionLimit = 10;
-                ServicePointManager.Expect100Continue = false;
-
-                #region Get zone-id for the domain name, which is used in the update statement below.
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create("https://api.cloudflare.com/client/v4/zones?&name=" + domainName);
-                req.Proxy = null;
-                req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
-                req.Timeout = 5000; // time spent trying to establish a connection (not including lookup time) before give up.
-                req.Accept = "*/*";
-                req.Method = "GET";
-                req.Headers.Add("X-Auth-Email:" + email);
-                req.Headers.Add("X-Auth-Key:" + apiKey);
-                req.ContentType = "application/json";
-
-                HttpWebResponse resp = (HttpWebResponse)await req.GetResponseAsync();
-                Stream dataStream = resp.GetResponseStream();
-                StreamReader reader = new StreamReader(dataStream);
-
-                string zones = String.Empty;
-                dynamic zones_data = JObject.Parse(await reader.ReadToEndAsync());
-                dynamic results = zones_data.result;
-
-                reader.Close();
-                resp.Close();
-
-                foreach (dynamic result in results)
-                {
-                    zones = Convert.ToString(result.id);
-                }
-                #endregion
-
-                #region Get dns_record id for the DNS record, which is used in the update statement below.
-                req = (HttpWebRequest)WebRequest.Create("https://api.cloudflare.com/client/v4/zones/" + zones + "/dns_records?type=" + type + "&name=" + dnsRecord + "." + domainName);
-                req.Proxy = null;
-                req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
-                req.Timeout = 5000; // time spent trying to establish a connection (not including lookup time) before give up.
-                req.Accept = "*/*";
-                req.Method = "GET";
-                req.Headers.Add("X-Auth-Email:" + email);
-                req.Headers.Add("X-Auth-Key:" + apiKey);
-                req.ContentType = "application/json";
-
-                resp = (HttpWebResponse)await req.GetResponseAsync();
-                dataStream = resp.GetResponseStream();
-                reader = new StreamReader(dataStream);
-
-                string dns_records = String.Empty;
-                dynamic zone_data = JObject.Parse(await reader.ReadToEndAsync());
-                dynamic zone_results = zone_data.result;
-
-                reader.Close();
-                resp.Close();
-
-                foreach (dynamic result in zone_results)
-                {
-                    dns_records = Convert.ToString(result.id);
-                }
-                #endregion
-
-                #region Send zone update.
-                req = (HttpWebRequest)WebRequest.Create("https://api.cloudflare.com/client/v4/zones/" + zones + "/dns_records/" + dns_records);
-                req.Proxy = null;
-                req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
-                req.Timeout = 5000; // time spent trying to establish a connection (not including lookup time) before give up.
-                req.Accept = "*/*";
-                req.Method = "PUT";
-                req.Headers.Clear();
-                req.Headers.Add("X-Auth-Email:" + email);
-                req.Headers.Add("X-Auth-Key:" + apiKey);
-                req.ContentType = "application/json";
-
-                string jsonData = "{\"type\":\"" + type + "\",\"name\":\"" + dnsRecord + "." + domainName + "\",\"content\":\"" + "test value" + "\",\"ttl\":" + ttl + "}";
-
-                StreamWriter sw = new StreamWriter(await req.GetRequestStreamAsync());
-                sw.Write(jsonData);
-                sw.Flush();
-                sw.Close();
-
-                resp = (HttpWebResponse)await req.GetResponseAsync();
-                dataStream = resp.GetResponseStream();
-                reader = new StreamReader(dataStream);
-
-                await reader.ReadToEndAsync();
-
-                reader.Close();
-                resp.Close();
-                #endregion
-
-                MessageBox.Show("CloudFlare DNS test is successfully. A test value has been added to the DNS record " + dnsRecord + ".", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Could not update CloudFlare DNS record. Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please select TTL time.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
 
-            btnTestCloudFlate.Text = "Test";
-            btnTestCloudFlate.Enabled = true;
+            if (cmbDNSProvider.SelectedItem == null)
+            {
+                MessageBox.Show("Please select DNS provider.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (String.IsNullOrEmpty(tbDNSEmail.Text))
+            {
+                MessageBox.Show("Please provide valid DNS email address.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            btnTestDNS.Text = "Testing...";
+            btnTestDNS.Enabled = false;
+
+            string apiKey = tbDNSApiKey.Text.Trim();
+            string apiSecret = tbDNSApiSecret.Text.Trim();
+            string email = tbDNSEmail.Text.Trim().ToLower();
+
+            string domainName = tbDNSDomain.Text.Trim().ToLower();
+            string dnsRecord = tbDNSRecord.Text.Trim();
+            string type = tbDNSRecordType.Text.Trim();           
+            string ttl = cmbDNSTTL.SelectedItem.ToString();
+
+            if (cmbDNSProvider.SelectedItem.ToString() == "GoDaddy")
+            {
+                Dictionary<string, object> pushRecord = new Dictionary<string, object>()
+                {
+                    { "data", "test value" },
+                    { "name", dnsRecord },
+                    { "ttl", int.Parse(ttl) },
+                    { "type", type },
+                    { "port", 1 },
+                    { "priority", 0 },
+                    { "protocol", "string" },
+                    { "service", "string" },
+                    { "weight", 0 },
+                };
+
+                try
+                {
+                    string jsonData = JsonConvert.SerializeObject(new object[1] { pushRecord });
+
+                    HttpWebRequest req = (HttpWebRequest)WebRequest.Create("https://api.godaddy.com/v1/domains/" + domainName + "/records/TXT/" + dnsRecord);
+
+                    req.Headers.Add("Authorization", "sso-key " + apiKey + ":" + apiSecret);
+                    req.ContentType = "application/json";
+                    req.Accept = "application/json";
+                    req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
+                    req.Method = "PUT";
+                    req.ContentLength = jsonData.Length;
+
+                    using (var writer = new StreamWriter(req.GetRequestStream()))
+                    {
+                        writer.Write(jsonData);
+                    }
+
+                    Dictionary<string, string> headers = new Dictionary<string, string>();
+
+                    HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+                    Stream strm = resp.GetResponseStream();
+                    StreamReader Reader = new StreamReader(strm, Encoding.Default);
+
+                    string content = Reader.ReadToEnd();
+                    headers.Clear();
+
+                    foreach (string headkey in resp.Headers.AllKeys)
+                    {
+                        headers.Add(headkey, resp.Headers[headkey]);
+                    }
+
+                    resp.Close();
+                    strm.Close();
+
+                    headers.Clear();
+
+                    MessageBox.Show("GoDaddy DNS test is successfully. A test value has been added to the DNS record " + dnsRecord + ".", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Could not update GoDaddy DNS record. Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                try
+                {
+                    ServicePointManager.DefaultConnectionLimit = 10;
+                    ServicePointManager.Expect100Continue = false;
+
+                    #region Get zone-id for the domain name, which is used in the update statement below.
+                    HttpWebRequest req = (HttpWebRequest)WebRequest.Create("https://api.cloudflare.com/client/v4/zones?&name=" + domainName);
+                    req.Proxy = null;
+                    req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
+                    req.Timeout = 5000; // time spent trying to establish a connection (not including lookup time) before give up.
+                    req.Accept = "*/*";
+                    req.Method = "GET";
+                    req.Headers.Add("X-Auth-Email:" + email);
+                    req.Headers.Add("X-Auth-Key:" + apiKey);
+                    req.ContentType = "application/json";
+
+                    HttpWebResponse resp = (HttpWebResponse)await req.GetResponseAsync();
+                    Stream dataStream = resp.GetResponseStream();
+                    StreamReader reader = new StreamReader(dataStream);
+
+                    string zones = String.Empty;
+                    dynamic zones_data = JObject.Parse(await reader.ReadToEndAsync());
+                    dynamic results = zones_data.result;
+
+                    reader.Close();
+                    resp.Close();
+
+                    foreach (dynamic result in results)
+                    {
+                        zones = Convert.ToString(result.id);
+                    }
+                    #endregion
+
+                    #region Get dns_record id for the DNS record, which is used in the update statement below.
+                    req = (HttpWebRequest)WebRequest.Create("https://api.cloudflare.com/client/v4/zones/" + zones + "/dns_records?type=" + type + "&name=" + dnsRecord + "." + domainName);
+                    req.Proxy = null;
+                    req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
+                    req.Timeout = 5000; // time spent trying to establish a connection (not including lookup time) before give up.
+                    req.Accept = "*/*";
+                    req.Method = "GET";
+                    req.Headers.Add("X-Auth-Email:" + email);
+                    req.Headers.Add("X-Auth-Key:" + apiKey);
+                    req.ContentType = "application/json";
+
+                    resp = (HttpWebResponse)await req.GetResponseAsync();
+                    dataStream = resp.GetResponseStream();
+                    reader = new StreamReader(dataStream);
+
+                    string dns_records = String.Empty;
+                    dynamic zone_data = JObject.Parse(await reader.ReadToEndAsync());
+                    dynamic zone_results = zone_data.result;
+
+                    reader.Close();
+                    resp.Close();
+
+                    foreach (dynamic result in zone_results)
+                    {
+                        dns_records = Convert.ToString(result.id);
+                    }
+                    #endregion
+
+                    #region Send zone update.
+                    req = (HttpWebRequest)WebRequest.Create("https://api.cloudflare.com/client/v4/zones/" + zones + "/dns_records/" + dns_records);
+                    req.Proxy = null;
+                    req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
+                    req.Timeout = 5000; // time spent trying to establish a connection (not including lookup time) before give up.
+                    req.Accept = "*/*";
+                    req.Method = "PUT";
+                    req.Headers.Clear();
+                    req.Headers.Add("X-Auth-Email:" + email);
+                    req.Headers.Add("X-Auth-Key:" + apiKey);
+                    req.ContentType = "application/json";
+
+                    string jsonData = "{\"type\":\"" + type + "\",\"name\":\"" + dnsRecord + "." + domainName + "\",\"content\":\"" + "test value" + "\",\"ttl\":" + ttl + "}";
+
+                    StreamWriter sw = new StreamWriter(await req.GetRequestStreamAsync());
+                    sw.Write(jsonData);
+                    sw.Flush();
+                    sw.Close();
+
+                    resp = (HttpWebResponse)await req.GetResponseAsync();
+                    dataStream = resp.GetResponseStream();
+                    reader = new StreamReader(dataStream);
+
+                    await reader.ReadToEndAsync();
+
+                    reader.Close();
+                    resp.Close();
+                    #endregion
+
+                    MessageBox.Show("CloudFlare DNS test is successfully. A test value has been added to the DNS record " + dnsRecord + ".", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Could not update CloudFlare DNS record. Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+            btnTestDNS.Text = "Test";
+            btnTestDNS.Enabled = true;
         }
         private async void btnSave_Click(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(tbCloudFlareApiKey.Text.Trim()) || String.IsNullOrEmpty(tbCloudFlareEmail.Text.Trim()) ||
-               String.IsNullOrEmpty(tbCloudFlareDomain.Text.Trim()) || String.IsNullOrEmpty(tbCloudFlareDNSRecord.Text.Trim()) ||
-               String.IsNullOrEmpty(tbCloudFlareRecordType.Text.Trim()) || String.IsNullOrEmpty(cmbCloudFlareTTL.SelectedItem.ToString()) ||
-               String.IsNullOrEmpty(tbSSLPath.Text.Trim()) || String.IsNullOrEmpty(cmbSSLCountry.SelectedItem.ToString()) ||
-               String.IsNullOrEmpty(tbSSLState.Text.Trim()) || String.IsNullOrEmpty(tbSSLLocality.Text.Trim()) ||
-               String.IsNullOrEmpty(tbSSLOrganization.Text.Trim()) || String.IsNullOrEmpty(tbSSLOU.Text.Trim()) ||
-               String.IsNullOrEmpty(tbSSLCommonName.Text.Trim()) || String.IsNullOrEmpty(tbHmailUser.Text.Trim()) ||
-               String.IsNullOrEmpty(tbHmailPassword.Text))
+            if(cmbDNSProvider.SelectedItem.ToString() == "GoDaddy")
             {
-                MessageBox.Show("Required information is missing. All fields marked with * are obligatory. Please, review the configurations.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                if (String.IsNullOrEmpty(tbDNSApiKey.Text.Trim()) || String.IsNullOrEmpty(tbDNSApiSecret.Text.Trim()) ||                     
+                    String.IsNullOrEmpty(tbDNSDomain.Text.Trim()) || String.IsNullOrEmpty(tbDNSRecord.Text.Trim()) ||
+                     String.IsNullOrEmpty(tbDNSEmail.Text.Trim()) ||
+                    String.IsNullOrEmpty(tbDNSRecordType.Text.Trim()) || String.IsNullOrEmpty(cmbDNSTTL.SelectedItem.ToString()) ||
+                    String.IsNullOrEmpty(tbSSLPath.Text.Trim()) || String.IsNullOrEmpty(cmbSSLCountry.SelectedItem.ToString()) ||
+                    String.IsNullOrEmpty(tbSSLState.Text.Trim()) || String.IsNullOrEmpty(tbSSLLocality.Text.Trim()) ||
+                    String.IsNullOrEmpty(tbSSLOrganization.Text.Trim()) || String.IsNullOrEmpty(tbSSLOU.Text.Trim()) ||
+                    String.IsNullOrEmpty(tbSSLCommonName.Text.Trim()) || String.IsNullOrEmpty(tbHmailUser.Text.Trim()) ||
+                    String.IsNullOrEmpty(tbHmailPassword.Text))
+                {
+                    MessageBox.Show("Required information is missing. All fields marked with * are obligatory. Please, review the configurations.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
             }
+            else
+            {
+                if (String.IsNullOrEmpty(tbDNSApiKey.Text.Trim()) || String.IsNullOrEmpty(tbDNSEmail.Text.Trim()) ||
+                   String.IsNullOrEmpty(tbDNSDomain.Text.Trim()) || String.IsNullOrEmpty(tbDNSRecord.Text.Trim()) ||
+                   String.IsNullOrEmpty(tbDNSRecordType.Text.Trim()) || String.IsNullOrEmpty(cmbDNSTTL.SelectedItem.ToString()) ||
+                   String.IsNullOrEmpty(tbSSLPath.Text.Trim()) || String.IsNullOrEmpty(cmbSSLCountry.SelectedItem.ToString()) ||
+                   String.IsNullOrEmpty(tbSSLState.Text.Trim()) || String.IsNullOrEmpty(tbSSLLocality.Text.Trim()) ||
+                   String.IsNullOrEmpty(tbSSLOrganization.Text.Trim()) || String.IsNullOrEmpty(tbSSLOU.Text.Trim()) ||
+                   String.IsNullOrEmpty(tbSSLCommonName.Text.Trim()) || String.IsNullOrEmpty(tbHmailUser.Text.Trim()) ||
+                   String.IsNullOrEmpty(tbHmailPassword.Text))
+                {
+                    MessageBox.Show("Required information is missing. All fields marked with * are obligatory. Please, review the configurations.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+            }
+
 
             if (chkNotify.Checked)
             {
@@ -449,13 +560,15 @@ namespace Configure
                     }
 
                     if (!chkEncryptConfig.Checked)
-                    {
-                        data["Domains"][0]["APIKey"] = tbCloudFlareApiKey.Text.Trim();
-                        data["Domains"][0]["Email"] = tbCloudFlareEmail.Text.Trim().ToLower();
-                        data["Domains"][0]["Domain_Name"] = tbCloudFlareDomain.Text.Trim().ToLower();
-                        data["Domains"][0]["DNS_Record"] = tbCloudFlareDNSRecord.Text.Trim().ToLower();
-                        data["Domains"][0]["Type"] = tbCloudFlareRecordType.Text.Trim().ToUpper();
-                        data["Domains"][0]["TTL"] = cmbCloudFlareTTL.SelectedItem.ToString();
+                    {                        
+                        data["Domains"][0]["DNSProvider"] = cmbDNSProvider.SelectedItem.ToString();
+                        data["Domains"][0]["APIKey"] = tbDNSApiKey.Text.Trim();
+                        data["Domains"][0]["APISecret"] = tbDNSApiSecret.Text.Trim();
+                        data["Domains"][0]["Email"] = tbDNSEmail.Text.Trim().ToLower();
+                        data["Domains"][0]["Domain_Name"] = tbDNSDomain.Text.Trim().ToLower();
+                        data["Domains"][0]["DNS_Record"] = tbDNSRecord.Text.Trim().ToLower();
+                        data["Domains"][0]["Type"] = tbDNSRecordType.Text.Trim().ToUpper();
+                        data["Domains"][0]["TTL"] = cmbDNSTTL.SelectedItem.ToString();
 
                         data["Domains"][0]["SSLPath"] = tbSSLPath.Text.Trim();
                         data["Domains"][0]["CountryName"] = cmbSSLCountry.SelectedItem.ToString();
@@ -488,12 +601,14 @@ namespace Configure
                     }
                     else
                     {
-                        data["Domains"][0]["APIKey"] = AesEncrypt(tbCloudFlareApiKey.Text.Trim());
-                        data["Domains"][0]["Email"] = AesEncrypt(tbCloudFlareEmail.Text.Trim().ToLower());
-                        data["Domains"][0]["Domain_Name"] = AesEncrypt(tbCloudFlareDomain.Text.Trim().ToLower());
-                        data["Domains"][0]["DNS_Record"] = AesEncrypt(tbCloudFlareDNSRecord.Text.Trim().ToLower());
-                        data["Domains"][0]["Type"] = tbCloudFlareRecordType.Text.Trim().ToUpper();
-                        data["Domains"][0]["TTL"] = cmbCloudFlareTTL.SelectedItem.ToString();
+                        data["Domains"][0]["DNSProvider"] = cmbDNSProvider.SelectedItem.ToString();
+                        data["Domains"][0]["APIKey"] = AesEncrypt(tbDNSApiKey.Text.Trim());
+                        data["Domains"][0]["APISecret"] = AesEncrypt(tbDNSApiSecret.Text.Trim());
+                        data["Domains"][0]["Email"] = AesEncrypt(tbDNSEmail.Text.Trim().ToLower());
+                        data["Domains"][0]["Domain_Name"] = AesEncrypt(tbDNSDomain.Text.Trim().ToLower());
+                        data["Domains"][0]["DNS_Record"] = AesEncrypt(tbDNSRecord.Text.Trim().ToLower());
+                        data["Domains"][0]["Type"] = tbDNSRecordType.Text.Trim().ToUpper();
+                        data["Domains"][0]["TTL"] = cmbDNSTTL.SelectedItem.ToString();
 
                         data["Domains"][0]["SSLPath"] = AesEncrypt(tbSSLPath.Text.Trim());
                         data["Domains"][0]["CountryName"] = AesEncrypt(cmbSSLCountry.SelectedItem.ToString());
@@ -541,16 +656,15 @@ namespace Configure
         }
         private void chkCloudFlareApi_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkCloudFlareApi.Checked == true)
+            if (chkDNSApi.Checked == true)
             {
-                tbCloudFlareApiKey.UseSystemPasswordChar = false;
+                tbDNSApiKey.UseSystemPasswordChar = false;
             }
             else
             {
-                tbCloudFlareApiKey.UseSystemPasswordChar = true;
+                tbDNSApiKey.UseSystemPasswordChar = true;
             }
         }
-
         private void chkNotifyPassword_CheckedChanged(object sender, EventArgs e)
         {
             if (chkNotifyPassword.Checked == true)
@@ -597,6 +711,60 @@ namespace Configure
                 lblSMTPUser.Text = "SMTP user:";
                 lblSMTPPassword.Text = "SMTP password:";
                 lblToEmail.Text = "To email:";
+            }
+        }
+        private void chkDNSApiSecret_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkDNSApiSecret.Checked)
+            {
+                tbDNSApiSecret.UseSystemPasswordChar = false;
+            }
+            else
+            {
+                tbDNSApiSecret.UseSystemPasswordChar = true;
+            }
+        }
+        private void cmbDNSProvider_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbDNSProvider.SelectedItem.ToString() == "GoDaddy")
+            {
+                tbDNSApiSecret.Enabled = true;
+                lblDNSApiSecret.Text = "API secret: *";
+
+                chkDNSApiSecret.Enabled = true;
+                chkDNSApiSecret.Checked = false;               
+
+                cmbDNSTTL.Items.Clear();
+
+                cmbDNSTTL.Items.Add("600"); // 10 min
+                cmbDNSTTL.Items.Add("1800"); // 30 min
+                cmbDNSTTL.Items.Add("3600"); // 1 hour
+                cmbDNSTTL.Items.Add("43200"); // 12 hours
+                cmbDNSTTL.Items.Add("86400"); // 1 day
+                cmbDNSTTL.Items.Add("604800"); // 1 week
+            }
+            else
+            {
+                tbDNSApiSecret.Enabled = false;
+                tbDNSApiSecret.Text = String.Empty;
+                lblDNSApiSecret.Text = "API secret:";
+
+                chkDNSApiSecret.Enabled = false;
+                chkDNSApiSecret.Checked = false;
+
+                cmbDNSTTL.Items.Clear();
+
+                cmbDNSTTL.Items.Add("60"); // 1 min
+                cmbDNSTTL.Items.Add("120"); // 2 min
+                cmbDNSTTL.Items.Add("300"); // 5 min
+                cmbDNSTTL.Items.Add("600"); // 10 min
+                cmbDNSTTL.Items.Add("900"); // 15 min
+                cmbDNSTTL.Items.Add("1800"); // 30 min
+                cmbDNSTTL.Items.Add("3600"); // 1 hour
+                cmbDNSTTL.Items.Add("7200"); // 2 hours
+                cmbDNSTTL.Items.Add("18000"); // 5 hours
+                cmbDNSTTL.Items.Add("43200"); // 12 hours
+                cmbDNSTTL.Items.Add("86400"); // 1 day
             }
         }
         #endregion
@@ -648,8 +816,7 @@ namespace Configure
         }
         protected static async Task CreateInitialConfigFileAsync()
         {
-            ;
-            string fileContent = "{\"Domains\":[{\"APIKey\":\"\",\"Email\":\"\",\"Domain_Name\":\"\",\"DNS_Record\":\"_acme-challenge.mail\",\"Type\":\"TXT\",\"TTL\":\"120\",\"SSLPath\":\"\",\"CountryName\":\"\",\"State\":\"\",\"Locality\":\"\",\"Organization\":\"\",\"OU\":\"\",\"CommonName\":\"\",\"LetsEncryptPemAccount\":\"\",\"SMTPSendNotification\":\"false\",\"SMTPServer\":\"\",\"SMTPPort\":\"\",\"SMTPUser\":\"\",\"SMTPPassword\":\"\",\"SMTPTo\":\"\",\"hMailUser\":\"Administrator\",\"hMailPassword\":\"\",\"EncryptConfig\":\"false\"}]}";
+            string fileContent = "{\"Domains\":[{\"DNSProvider\":\"\",\"APIKey\":\"\",\"APISecret\":\"\",\"Email\":\"\",\"Domain_Name\":\"\",\"DNS_Record\":\"_acme-challenge.mail\",\"Type\":\"TXT\",\"TTL\":\"\",\"SSLPath\":\"\",\"CountryName\":\"\",\"State\":\"\",\"Locality\":\"\",\"Organization\":\"\",\"OU\":\"\",\"CommonName\":\"\",\"LetsEncryptPemAccount\":\"\",\"SMTPSendNotification\":\"false\",\"SMTPServer\":\"\",\"SMTPPort\":\"\",\"SMTPUser\":\"\",\"SMTPPassword\":\"\",\"SMTPTo\":\"\",\"hMailUser\":\"Administrator\",\"hMailPassword\":\"\",\"EncryptConfig\":\"false\"}]}";
 
             try
             {

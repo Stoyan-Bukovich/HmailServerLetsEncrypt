@@ -1,6 +1,6 @@
-# HMail Server, Let's Encrypt and CloudFlare Auto-Updater
+# HMail Server and Let's Encrypt Auto-Updater
 
-Automate the renewal of SSL certificates for your HMailServer with Let's Encrypt and CloudFlare. This tool is designed to effortlessly monitor SSL certificate expiration and, if necessary, request, install, and apply new SSL certificates to your HMailServer instances.
+Automate the renewal of SSL certificates for your HMailServer with Let's Encrypt, CloudFlare and GoDaddy. This tool is designed to effortlessly monitor SSL certificate expiration and, if necessary, request, install, and apply new SSL certificates to your HMailServer instances.
 
 
 **!!! Important consideration: Please note that this tool only renews a single SSL certificate and applies it to all SSL-enabled ports. It does not support multiple certificates !!!**
@@ -33,7 +33,9 @@ This tool was developed and tested with the following components:
 {
 	"Domains": [
 		{
-			"APIKey": "", - Request CloudFlare API key and set it in this field. Example: z2fd956c1a7a44606e8c6d654f7d6d3eb420
+			"DNSProvider": "", - Supported values are GoDaddy and CloudFlare.
+			"APIKey": "", - Request CloudFlare or GoDaddy API key and set it in this field. Example: z2fd956c1a7a44606e8c6d654f7d6d3eb420
+			"APISecret": "", - This field is required only with GoDaddy DNS. Put your API secret key here.
 			"Email": "",  - Set your CloudFlare email address in this field. Example: myemail@gmail.com
 			"Domain_Name": "", - Set the domain name which would hold the _acme-challenge TXT record. Example: mydomain.com
 			"DNS_Record": "",  - Set the TXT record name which would hold the LetsEncrypt verification value. Example: _acme-challenge.mail
