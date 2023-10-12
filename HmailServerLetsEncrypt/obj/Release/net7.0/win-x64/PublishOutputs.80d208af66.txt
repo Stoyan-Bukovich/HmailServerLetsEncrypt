@@ -1,0 +1,2 @@
+C:\Users\Adriana\Downloads\HmailServerSSL\HmailServerLetsEncrypt\bin\Release\net7.0\publish\win-x64\HmailServerLetsEncrypt.pdb
+C:\Users\Adriana\Downloads\HmailServerSSL\HmailServerLetsEncrypt\bin\Release\net7.0\publish\win-x64\HmailServerLetsEncrypt.exe

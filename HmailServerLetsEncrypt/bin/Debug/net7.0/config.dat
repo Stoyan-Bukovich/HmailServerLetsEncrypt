@@ -1,0 +1,31 @@
+{
+  "Domains": [
+    {
+      "DNSProvider": "CloudFlare",
+      "APIKey": "c2fd9a6c1a7a04606e8c66c9f77d26d3eb420",
+      "APISecret": "",
+      "Email": "s.bukovich@snb-bg.com",
+      "Domain_Name": "serverowners.org",
+      "DNS_Record": "_acme-challenge.mail",
+      "Type": "TXT",
+      "TTL": "120",
+      "SSLPath": "C:\\hmail\\crts",
+      "CountryName": "MX",
+      "State": "BCS",
+      "Locality": "CSL",
+      "Organization": "SNB",
+      "OU": "HQ",
+      "CommonName": "mail.serverowners.org",
+      "LetsEncryptPemAccount": "-----BEGIN EC PRIVATE KEY-----\r\nMHcCAQEEICs6A/+Gxw+PzJxtWvyE0AyRM1XtzTsf2wUPeQgDktGroAoGCCqGSM49\r\nAwEHoUQDQgAEFEPfwIvNxz7NzrXjj+vuexWhQZ4Eba7dEnrqA6lG80joSV4QYysE\r\ni+swoHAkXVP/CyfgnZaLl33ZfbxR1BUuIA==\r\n-----END EC PRIVATE KEY-----",
+      "SMTPSendNotification": "false",
+      "SMTPServer": "",
+      "SMTPPort": "",
+      "SMTPUser": "",
+      "SMTPPassword": "",
+      "SMTPTo": "",
+      "hMailUser": "Administrator",
+      "hMailPassword": "stoiansnb",
+      "EncryptConfig": "false"
+    }
+  ]
+}

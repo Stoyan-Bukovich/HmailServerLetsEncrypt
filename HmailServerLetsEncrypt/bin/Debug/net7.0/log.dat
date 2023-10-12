@@ -1,0 +1,6 @@
+Exception executing (HmailGetActiveCrtExpDateAsync): El sistema no puede encontrar el archivo especificado. 11/10/2023 09:26:17 p. m.
+Updated TXT record _acme-challenge.mail.serverowners.org to iT-Yb6Xn-dBcfF7Taf2SfppoMjFRRD3Mb7WjYwyilbM on 11/10/2023 09:26:20 p. m.
+Stopping hmailserver service. 11/10/2023 09:27:22 p. m.
+Staring hmailserver service. 11/10/2023 09:27:22 p. m.
+Certificate successfully updated and deployed. 11/10/2023 09:27:22 p. m.
+Security certificate check run on: 11/10/2023 09:27:22 p. m.

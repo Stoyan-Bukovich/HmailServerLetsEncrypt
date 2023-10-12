@@ -1,0 +1,2 @@
+C:\Users\Adriana\Downloads\HmailServerSSL\Configure\bin\Release\net7.0-windows\publish\win-x64\Configure.pdb
+C:\Users\Adriana\Downloads\HmailServerSSL\Configure\bin\Release\net7.0-windows\publish\win-x64\Configure.exe
