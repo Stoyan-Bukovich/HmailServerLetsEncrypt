@@ -205,7 +205,7 @@ namespace Configure
 
                 MimeMessage msg = new MimeMessage();
 
-                msg.To.Add(MailboxAddress.Parse(smtpUser));
+                msg.To.Add(MailboxAddress.Parse(SMTPTo));
                 msg.From.Add(new MailboxAddress("SSL Notification", smtpUser));
 
                 string message = "Successful Configuration of Email Notifications.";

@@ -399,7 +399,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Usuario\\.nuget\\packages\\": {}
+    "C:\\Users\\Adriana\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
@@ -407,11 +407,11 @@
       "projectUniqueName": "C:\\Users\\Adriana\\Downloads\\HmailServerSSL\\Configure\\Configure.csproj",
       "projectName": "Configure",
       "projectPath": "C:\\Users\\Adriana\\Downloads\\HmailServerSSL\\Configure\\Configure.csproj",
-      "packagesPath": "C:\\Users\\Usuario\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\Adriana\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\Adriana\\Downloads\\HmailServerSSL\\Configure\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Usuario\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Adriana\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
